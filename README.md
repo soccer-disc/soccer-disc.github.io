@@ -1,15 +1,3 @@
-The reason the file upload input was treating the file as an MP4/video instead of an audio-only file comes down to the `<input type="file" accept="audio/*">` attribute behavior in standard HTML. On many mobile devices and browsers, tapping `audio/*` automatically opens the device's video picker or camera roll alongside audio files, or treats recorded voice notes as `.mp4` / `.mov` container files.
-
-To fix that permanently so it **strictly accepts and processes audio formats (`.mp3`, `.wav`, `.m4a`, `.aac`)** without confusing them with video files, the file input accept filter needs to be explicitly restricted to audio MIME types, and we can add a dedicated audio recorder button right inside the web app.
-
-Here is the fully fixed, drop-in updated code for your `index.html` file. It features:
-
-1. **Strict Audio-Only File Input** (`accept=".mp3,.wav,.m4a,.aac,audio/*"`).
-2. **Direct Microphone Voice Recording:** A button that lets you record your voice live in the browser, instantly converting it into the voiceover track.
-3. **Full 2D Bean-Head Cartoon Characters & Multi-Setting 3D Worlds** (fully responsive in the Gemini live preview and GitHub Pages).
-4. **Baked-In One-Word Subtitles** and mobile **Save to Photos** support.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -400,5 +388,3 @@ Here is the fully fixed, drop-in updated code for your `index.html` file. It fea
 
 </body>
 </html>
-
-```
