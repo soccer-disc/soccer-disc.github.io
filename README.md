@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cartoon Short Generator - Dynamic Settings & Full Cast</title>
+    <title>Universal Cartoon Short Generator</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -128,14 +128,14 @@
 <body>
 
 <div class="container">
-    <h1>Cartoon Short Generator</h1>
+    <h1>Universal Cartoon Short Generator</h1>
     
     <div class="form-group">
-        <label for="script-input">Script (Supports Multiple Settings & Characters)</label>
-        <textarea id="script-input">A man sold the Eiffel Tower twice. In a bustling Parisian market square, he shook hands with a wealthy buyer. Later inside a shadowy office, he signed the fraudulent papers.</textarea>
+        <label for="script-input">Type Any Idea or Story</label>
+        <textarea id="script-input">An astronaut landed on a strange alien planet and discovered a vending machine selling cosmic coffee.</textarea>
     </div>
 
-    <button id="generate-btn">Generate Short & Download</button>
+    <button id="generate-btn">Generate Video & Download</button>
 
     <div id="preview-container">
         <div id="status-text" class="progress-box">Ready</div>
@@ -149,7 +149,7 @@
     </div>
 </div>
 
-<!-- Three.js for 3D Toon World Render -->
+<!-- Three.js Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scriptInput = document.getElementById('script-input');
@@ -167,13 +167,13 @@
     generateBtn.addEventListener('click', async () => {
         const text = scriptInput.value.trim();
         if (!text) {
-            alert('Please enter a script.');
+            alert('Please enter a script or idea.');
             return;
         }
 
         generateBtn.disabled = true;
         resultActions.classList.add('hidden');
-        statusText.textContent = 'Building World & Full Cast...';
+        statusText.textContent = 'Parsing Idea & Building Custom World...';
 
         try {
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
@@ -194,57 +194,47 @@
             dirLight.position.set(5, 10, 7);
             scene.add(dirLight);
 
-            // Environment Ground
+            // Ground
             const groundGeo = new THREE.PlaneGeometry(30, 30);
             const groundMat = new THREE.MeshToonMaterial({ color: 0x334155 });
             const ground = new THREE.Mesh(groundGeo, groundMat);
             ground.rotation.x = -Math.PI / 2;
             scene.add(ground);
 
-            // --- FULL CAST (Main Hero + Styled Outfits + Side Villagers) ---
+            // --- UNIVERSAL CHARACTER & PROP BUILDER ---
+            // Automatically color and style characters based on keywords in the user's idea
+            const lowerText = text.toLowerCase();
+            let charColor = 0x38bdf8; // default blue hero
+            let propColor = 0x475569;
+
+            if (lowerText.includes('space') || lowerText.includes('astronaut') || lowerText.includes('alien') || lowerText.includes('planet')) {
+                charColor = 0xe2e8f0; // Spacesuit white
+                propColor = 0x818cf8; // Alien purple/blue
+            } else if (lowerText.includes('forest') || lowerText.includes('animal') || lowerText.includes('bear') || lowerText.includes('tree')) {
+                charColor = 0xd97706; // Brown/Orange
+                propColor = 0x15803d; // Green
+            } else if (lowerText.includes('money') || lowerText.includes('bank') || lowerText.includes('tower') || lowerText.includes('city')) {
+                charColor = 0x3b82f6;
+                propColor = 0x64748b;
+            }
+
+            // Main Character
             const heroGroup = new THREE.Group();
-            const heroBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.3), new THREE.MeshToonMaterial({ color: 0x38bdf8 }));
+            const heroBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.3), new THREE.MeshToonMaterial({ color: charColor }));
             heroBody.position.y = 0.6;
             const heroHead = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16), new THREE.MeshToonMaterial({ color: 0xfde047 }));
             heroHead.position.y = 1.45;
-            
-            // Add Hat / Outfit detail
-            const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.2, 16), new THREE.MeshToonMaterial({ color: 0x1e3a8a }));
-            hat.position.y = 1.8;
-            heroGroup.add(heroBody, heroHead, hat);
+            heroGroup.add(heroBody, heroHead);
             heroGroup.position.set(0, 0, 0);
             scene.add(heroGroup);
 
-            // Side Character 1 (Merchant)
-            const merchant = new THREE.Group();
-            const mBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.1, 0.3), new THREE.MeshToonMaterial({ color: 0xf43f5e }));
-            mBody.position.y = 0.55;
-            const mHead = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), new THREE.MeshToonMaterial({ color: 0xfde047 }));
-            mHead.position.y = 1.35;
-            merchant.add(mBody, mHead);
-            merchant.position.set(-1.3, 0, -0.6);
-            scene.add(merchant);
-
-            // Side Character 2 (Buyer / Guard)
-            const buyer = new THREE.Group();
-            const bBody = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.15, 0.3), new THREE.MeshToonMaterial({ color: 0x10b981 }));
-            bBody.position.y = 0.58;
-            const bHead = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), new THREE.MeshToonMaterial({ color: 0xfde047 }));
-            bHead.position.y = 1.38;
-            buyer.add(bBody, bHead);
-            buyer.position.set(1.3, 0, -0.9);
-            scene.add(buyer);
-
-            // Setting props (Building / Pillar structures)
-            const propGeo = new THREE.BoxGeometry(1.2, 3.5, 1.2);
-            const propMat = new THREE.MeshToonMaterial({ color: 0x475569 });
-            const leftBuilding = new THREE.Mesh(propGeo, propMat);
-            leftBuilding.position.set(-2.5, 1.75, -2);
-            scene.add(leftBuilding);
-
-            const rightBuilding = new THREE.Mesh(propGeo, propMat);
-            rightBuilding.position.set(2.5, 1.75, -2);
-            scene.add(rightBuilding);
+            // Side Character / Prop Object
+            const sideObject = new THREE.Group();
+            const objMesh = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.4, 0.6), new THREE.MeshToonMaterial({ color: propColor }));
+            objMesh.position.y = 0.7;
+            sideObject.add(objMesh);
+            sideObject.position.set(1.4, 0, -1);
+            scene.add(sideObject);
 
             // Audio & Voice Timing Setup
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -296,15 +286,13 @@
                 if (frame < totalFrames) {
                     const time = frame / fps;
                     
-                    // Dynamic Setting Shift halfway through
+                    // Dynamic Setting Shift halfway through for story progression
                     if (time > durationSec * 0.5) {
-                        scene.background.setHex(0x1e1b4b); // Shift to night/office setting
-                        groundMat.color.setHex(0x1e293b);
-                        propMat.color.setHex(0x334155);
+                        scene.background.setHex(0x1e1b4b); // Night / Twist setting
+                        groundMat.color.setHex(0x0f172a);
                     } else {
-                        scene.background.setHex(0x0f172a); // Day market setting
+                        scene.background.setHex(0x0f172a); // Opening setting
                         groundMat.color.setHex(0x334155);
-                        propMat.color.setHex(0x475569);
                     }
 
                     // 1-Word Subtitles
@@ -314,12 +302,10 @@
                     // Character animations
                     heroGroup.rotation.y = Math.sin(frame * 0.08) * 0.3;
                     heroHead.position.y = 1.45 + Math.sin(frame * 0.35) * 0.06;
-                    hat.position.y = 1.8 + Math.sin(frame * 0.35) * 0.06;
                     
-                    merchant.rotation.y = Math.cos(frame * 0.06) * 0.15;
-                    buyer.position.y = Math.sin(frame * 0.05) * 0.05;
+                    sideObject.rotation.y = Math.cos(frame * 0.05) * 0.2;
 
-                    // Camera moves across settings
+                    // Camera motion
                     camera.position.x = Math.sin(frame * 0.015) * 0.5;
                     camera.position.y = 1.6 + Math.cos(frame * 0.025) * 0.15;
                     camera.lookAt(0, 1, 0);
